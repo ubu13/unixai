@@ -1,0 +1,3 @@
+[submodule "core"]
+	path = core
+	url = git@github.com:ubu13/unixaicore.git
