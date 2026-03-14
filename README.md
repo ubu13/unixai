@@ -1,8 +1,8 @@
-# UNIXAI - The MINI JARVIS 🤖 
+# UNIXAI - The MINI JARVIS 🤖
 
-An Intelligent WhatsApp-to-System Interface & Autonomous AI Orchestrator.
+**An Intelligent WhatsApp-to-System Interface & Autonomous AI Orchestrator.**
 
-A headless WhatsApp Web automation engine integrated with advanced AI (Gemini, Groq, Ollama), designed to serve as a remote gateway for desktop control and intelligent system assistance
+A headless WhatsApp Web automation engine integrated with advanced AI (Gemini, Groq, Ollama), designed to serve as a remote gateway for desktop control and intelligent system assistance.
 
 ## 🚀 Quick Start
 
@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 # Install Playwright browsers
 playwright install chromium
-ac
+
 # Run dashboard (port 8888)
 python dashboard_app.py
 
@@ -53,55 +53,70 @@ DASHBOARD_PORT=8888  # Change to any available port
 
 ```
 UNIXAI/
-├── main.py                 # Main entry point
-├── dashboard_app.py        # Dashboard entry point
-├── login.py                # Quick login helper
-├── requirements.txt        # Python dependencies
+├── .cursor/rules/              # AI Assistant Instructions
+│   └── ai-instructions.md      # Guide for AI assistants
 │
-├── shared/                 # Modular base classes
-│   ├── bases.py           # BaseAgent, BaseService, BaseTool
-│   ├── utils.py           # Decorators & utilities
-│   ├── errors.py          # Custom exceptions
-│   └── services.py        # Shared services
+├── docs/                       # Documentation
+│   ├── architecture/           # Architecture docs
+│   │   └── architecture.md     # System architecture overview
+│   ├── modules/                # Module reference
+│   │   └── modules.md          # All modules documented
+│   ├── decisions/              # Architectural Decision Records
+│   │   └── ADR-*.md            # Decision history
+│   ├── FEATURES.txt            # Complete feature list
+│   ├── TODO.md                 # Roadmap
+│   └── TROUBLESHOOT.txt        # Troubleshooting guide
 │
-├── channels/               # Channel implementations
-│   └── whatsapp/           # WhatsApp Web automation
-│       ├── agents/         # AI agents (ReAct pattern)
-│       ├── adapters/       # WhatsApp & LLM adapters (Gemini/Groq/Ollama)
-│       ├── services/       # Business logic (GroupDetector, etc.)
-│       ├── monitoring/     # Error monitoring
-│       ├── logging/        # Chat logging
-│       ├── rules/          # Message rules (12 rules)
-│       ├── skills/         # RAG knowledge base
-│       ├── emotional_core.py  # ⚠️ LEGACY - Not used (removed for latency)
-│       └── config/         # Configuration
+├── channels/whatsapp/          # WhatsApp Web automation
+│   ├── agents/                 # AI agents (ReAct pattern)
+│   ├── adapters/               # LLM & WhatsApp adapters
+│   │   ├── llm/                # LLM providers
+│   │   │   ├── gemini.py       # Gemini API client
+│   │   │   ├── groq.py         # Groq API client
+│   │   │   └── ollama.py       # Ollama client (offline)
+│   │   └── whatsapp.py         # WhatsApp client
+│   ├── services/               # Business logic
+│   ├── rules/                  # Message rules (12 rules)
+│   ├── skills/                 # RAG knowledge base
+│   ├── monitoring/             # Error monitoring
+│   └── logging/                # Chat logging
 │
-├── dashboard/              # Dashboard application
-│   ├── routes/             # API routes
-│   ├── templates/          # HTML templates
-│   ├── static/             # CSS/JS assets
-│   └── state.py            # Runtime state management
+├── dashboard/                  # Web Dashboard (FastAPI)
+│   ├── app.py                  # FastAPI application
+│   ├── routes/                 # API routes
+│   ├── templates/              # HTML templates
+│   ├── static/                 # CSS/JS assets
+│   └── state.py                # Runtime state
 │
-├── config/                 # Configuration files
-│   ├── keys/               # API keys (gitignored)
-│   ├── ai_wa.py            # LLM configuration
-│   └── prompt_common.txt   # System prompts
+├── shared/                     # Foundation (base classes)
+│   ├── bases.py                # BaseAgent, BaseService, BaseTool
+│   ├── utils.py                # Decorators & utilities
+│   ├── errors.py               # Custom exceptions (12 types)
+│   └── services.py             # Shared services
 │
-├── reports/                # Generated reports
-│   ├── agent/              # Chat logs, stats
-│   └── logs/               # System logs
+├── config/                     # Configuration
+│   ├── keys/                   # API keys (gitignored)
+│   ├── ai_wa.py                # LLM configuration
+│   └── prompt_common.txt       # System prompts
 │
-├── knowledge/              # RAG vector DB (runtime)
-│   ├── documents/          # Uploaded files
-│   ├── web/                # Crawled websites
-│   └── vector_db/          # ChromaDB storage
+├── knowledge/                  # RAG Vector DB
+│   ├── documents/              # Uploaded files
+│   ├── web/                    # Crawled websites
+│   └── vector_db/              # ChromaDB storage
 │
-├── docs/                   # Documentation (cleaned)
-├── scripts/                # Utility scripts
-├── tools/                  # Utility tools
-│   └── dom/                # DOM monitoring tools
+├── reports/                    # Runtime Data
+│   ├── agent/                  # Chat logs, stats
+│   └── logs/                   # System logs
 │
-└── wa_profile/             # WhatsApp session profile (gitignored)
+├── scripts/                    # Utility scripts
+├── tools/                      # Tools
+│   └── dom/                    # DOM monitoring
+│
+├── main.py                     # Main entry point (WhatsApp)
+├── dashboard_app.py            # Dashboard entry point
+├── login.py                    # Quick login helper
+├── requirements.txt            # Python dependencies
+└── wa_profile/                 # WhatsApp session (gitignored)
 ```
 
 ---
@@ -112,24 +127,25 @@ UNIXAI/
 
 | File | Description |
 |------|-------------|
-| [`AI_INSTRUCTION.md`](AI_INSTRUCTION.md) | 📘 **Complete development guide for AI assistants** |
+| [`docs/architecture/architecture.md`](docs/architecture/architecture.md) | 🏗️ **System architecture overview** |
+| [`docs/modules/modules.md`](docs/modules/modules.md) | 📦 **Complete module reference** |
+| [`.cursor/rules/ai-instructions.md`](.cursor/rules/ai-instructions.md) | 🤖 **AI assistant guidelines** |
+| [`AI_INSTRUCTION.md`](AI_INSTRUCTION.md) | 📘 **Complete development guide** |
 | [`docs/FEATURES.txt`](docs/FEATURES.txt) | Complete feature list |
 | [`docs/TODO.md`](docs/TODO.md) | Roadmap & planned features |
 | [`docs/TROUBLESHOOT.txt`](docs/TROUBLESHOOT.txt) | Troubleshooting guide |
-| [`config/ai_wa.py`](config/ai_wa.py) | LLM configuration (Gemini/Groq/Ollama) |
-| [`docs/rules-policy.txt`](docs/rules-policy.txt) | AI response rules & policies |
+| [`docs/decisions/`](docs/decisions/) | Architectural Decision Records (ADR) |
 
 ### **Additional Resources**
 
 | File | Description |
 |------|-------------|
-| `tools/dom/README.md` | DOM testing tools |
-| `scripts/README.md` | Utility scripts |
-| `EMOTIONAL_CORE_INTEGRATION.md` | Emotional core details (legacy) |
-| `RAG_IMPLEMENTATION.md` | RAG setup guide (legacy) |
-| `RAG_MODE_TOGGLE_IMPLEMENTATION.md` | RAG modes (legacy) |
+| [`config/ai_wa.py`](config/ai_wa.py) | LLM configuration (Gemini/Groq/Ollama) |
+| [`config/rules-policy.txt`](config/rules-policy.txt) | AI response rules & policies |
+| [`tools/dom/README.md`](tools/dom/README.md) | DOM testing tools |
+| [`scripts/README.md`](scripts/README.md) | Utility scripts documentation |
 
-> **Note:** For development work, always refer to [`AI_INSTRUCTION.md`](AI_INSTRUCTION.md) first. It contains comprehensive guides for adding features, troubleshooting, and understanding the architecture.
+> **💡 Tip:** For development work, start with [`docs/architecture/architecture.md`](docs/architecture/architecture.md) for big picture, then [`docs/modules/modules.md`](docs/modules/modules.md) for module details. AI assistants should read [`.cursor/rules/ai-instructions.md`](.cursor/rules/ai-instructions.md) first.
 
 ---
 
