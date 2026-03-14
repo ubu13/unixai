@@ -1,6 +1,8 @@
-# AutoWA - WhatsApp Automation
+# UNIXAI - The MINI JARVIS 🤖 
 
-WhatsApp Web automation dengan AI integration.
+An Intelligent WhatsApp-to-System Interface & Autonomous AI Orchestrator.
+
+A headless WhatsApp Web automation engine integrated with advanced AI (Gemini, Groq, Ollama), designed to serve as a remote gateway for desktop control and intelligent system assistance
 
 ## 🚀 Quick Start
 
@@ -10,7 +12,7 @@ pip install -r requirements.txt
 
 # Install Playwright browsers
 playwright install chromium
-
+ac
 # Run dashboard (port 8888)
 python dashboard_app.py
 
