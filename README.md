@@ -157,35 +157,112 @@ UNIXAI/
 - ✅ **Private Chat** - Full response mode
 - ✅ **Message Deduplication** - Hash-based duplicate detection
 - ✅ **Voice Notes** - Auto-transcription with Whisper
+- ✅ **Message Age Filtering** - Ignores messages older than 1 hour
+- ✅ **Multi-line Message Sending** - Clipboard paste (avoids WhatsApp splitting)
+- ✅ **Reply Chaining** - Quotes original message in replies
+- ✅ **Quote/Reply Detection** - Multiple DOM selectors for accurate detection
+- ✅ **Automatic Reconnection** - Retry logic with exponential backoff
+- ✅ **Popup/Dialog Handling** - Auto-dismisses "Link this device" prompts
+- ✅ **Chat Type Detection** - High-accuracy multi-priority algorithm (comma-counting, header stabilization, typing-status filtering)
 
 ### **AI Integration**
 - ✅ **Multi-LLM Support** - Gemini, Groq (4 models), Ollama (offline)
+- ✅ **Groq 4-Tier Model Routing** - Auto-routes by complexity (greeting→8B, general→20B, factual→70B, coding→120B)
 - ✅ **Smart Replies** - Context-aware responses (NO emotional core - removed for latency)
-- ✅ **Rules Engine** - 12 hardcoded rules (bypasses LLM)
+- ✅ **Rules Engine** - 13 hardcoded rules (bypasses LLM)
 - ✅ **RAG Knowledge Base** - Document upload + web crawling (HYBRID/FULL RAG/GENERAL AI modes)
 - ✅ **Guided Freedom** - Creative, varied responses (temperature 0.8, no templates)
 - ✅ **Multi-line Output** - Clipboard paste for `/aitest` commands (single reply)
 - ✅ **Low Latency** - Direct AI response (no emotional processing overhead)
+- ✅ **API Key Rotation** - Round-robin with persistent index (survives restarts)
+- ✅ **Web Search** - DuckDuckGo integration (weather, financial, news, sports, politics)
+- ✅ **Regional Language Detection** - Javanese, Sundanese, Batak, Minang, Bugis, Banjar
+- ✅ **Pronoun Reference Detection** - Context-aware replies (dia, itu, nya, mereka)
+- ✅ **Conversation Memory** - Remembers last exchange per sender (50 messages, 24h TTL)
+- ✅ **Rate Limit Handling** - Cooldown/backoff on 429 errors
+- ✅ **Quote Context Extraction** - Extracts quoted/replied message text for LLM context
 
 ### **Dashboard & Monitoring**
 - ✅ **Web UI** - FastAPI dashboard at http://127.0.0.1:8888
-- ✅ **Real-time Logs** - WebSocket updates with phone masking
+- ✅ **Real-time Logs** - Server-Sent Events (SSE) with phone masking
 - ✅ **LLM Switching** - Hot-swap providers (Gemini/Groq/Ollama)
 - ✅ **Ollama Control** - Model selector + keep-alive toggle
 - ✅ **RAG Mode Toggle** - Switch between HYBRID/FULL RAG
 - ✅ **Browser Selection** - Native (System Chrome) vs Bundled (Playwright)
 - ✅ **Headless Mode** - CPU savings 30-40%
+- ✅ **Ignore Groups Toggle** - Hot-swap ON/OFF without restart
 - ✅ **Statistics** - Chat analytics with Plotly charts
 - ✅ **API Key Management** - Add/Edit/Delete keys with rotation
+- ✅ **Terminal Command Center** - Whitelisted read-only shell commands
+- ✅ **AI Chat Interface** - Dashboard's own LLM client (separate from WA keys)
+- ✅ **Knowledge Base Management** - Upload documents, add websites, query, delete
+- ✅ **Analytics Page** - Real-time WebSocket updates, KPI summary, daily stats, top senders
+- ✅ **System Information** - OS, uptime, kernel, platform display
+- ✅ **WhatsApp Status Display** - Connection, session, uptime, messages, errors
+- ✅ **Pause/Resume Control** - Optional auto-resume timer (duration in minutes)
+- ✅ **Auto-detect Running Agent** - Scans psutil to detect agent started outside dashboard
+- ✅ **SPA Architecture** - Single-page app with catch-all routing
+- ✅ **WhatsApp Status Broadcast** - WebSocket broadcasts of connection status changes
+
+### **Analytics & Database**
+- ✅ **SQLite Database** - Dual-write (text files + SQLite simultaneously)
+- ✅ **Response Latency Tracking** - IN-to-OUT timestamp calculation (p50, p95, avg, min, max)
+- ✅ **Message Analytics** - Daily stats, top senders, chat type distribution, peak hours
+- ✅ **Activity Heatmap** - Hour x day of week visualization
+- ✅ **Group Statistics** - Message count, unique senders per group
+- ✅ **Recent Activity Feed** - Real-time WebSocket updates
+- ✅ **Auto-migration** - Schema changes handled automatically
+- ✅ **Database Views** - daily_stats, top_senders, group_activity
+
+### **RAG Knowledge Base**
+- ✅ **Document Upload** - PDF, DOCX, TXT, MD support
+- ✅ **Web Crawling** - Domain-restricted, depth-limited (max 20 pages)
+- ✅ **Text Chunking** - 500-char chunks with 50-char overlap
+- ✅ **Vector Search** - ChromaDB with cosine similarity
+- ✅ **3 Operational Modes** - general_ai, smart_mode (RAG→LLM fallback), rag_only
+- ✅ **Source Attribution** - Answers include source references
+- ✅ **Confidence Threshold** - 0.75 minimum for RAG answers
+- ✅ **Auto-cleanup** - Orphaned vector removal on document deletion
+- ✅ **Real-time Mode Switching** - No restart required
+
+### **Security & Access Control**
+- ✅ **Bot Commands Disabled in Groups** - `/botoff`, `/boton` only in private
+- ✅ **Authorization System** - BOSS_IDENTIFIERS and CONTROL_IDENTIFIERS
+- ✅ **`/aitest` Command Whitelist** - 21 read-only commands only
+- ✅ **Banned Tokens** - `|`, `;`, `&&`, `||`, `>`, `<`, `$(`, backticks, `sudo`, etc.
+- ✅ **Forkbomb Detection** - Pattern matching for dangerous commands
+- ✅ **AI Output Cleaning** - Removes quotes, backticks, markdown, comments
+- ✅ **Sensitive Keyword Blocking** - Passwords, OTP, PIN, bank accounts, KTP, NIK, NPWP
+- ✅ **Ignored Chats** - Official WhatsApp accounts filtered out
+- ✅ **Privacy-First Logging** - Phone number masking in all logs
+
+### **Logging & Monitoring**
+- ✅ **Multi-Destination Logging** - TXT, JSONL, SQLite, Console, WebSocket
+- ✅ **Log Rotation** - Daily rotation with configurable retention (90/30/7 days)
+- ✅ **Gzip Compression** - Old logs compressed automatically
+- ✅ **Color-Coded Console** - Green=private, blue=group, cyan=out, purple=group out, red=errors
+- ✅ **Error Monitoring** - Rate tracking, alert thresholds, cooldown system
+- ✅ **Health Service** - Unified health checks (Ollama, WA, Gemini, Groq, SQLite, Dashboard)
+- ✅ **Error Report Generation** - JSON export with error type distribution
+
+### **Memory & Planning**
+- ✅ **Short-term Memory** - TTL-based (1 hour, max 100 items)
+- ✅ **Long-term Memory** - Persistent JSON file storage
+- ✅ **Task Planner** - Priority-based task creation (CRITICAL, HIGH, MEDIUM, LOW)
+- ✅ **ReAct Loop Engine** - OBSERVE → THINK → ACT → OBSERVE → REFLECT cycle
+- ✅ **Tool Registry** - Tool execution with max iteration limit
+- ✅ **Step Trace Recording** - Full execution history
 
 ### **Architecture**
 - ✅ **Modular Design** - Base classes (BaseAgent, BaseService, BaseTool)
 - ✅ **DRY Principle** - Shared utilities, decorators, services
-- ✅ **Event-Driven** - Pub/sub event bus
-- ✅ **Health Monitoring** - Built-in health checks
+- ✅ **Event-Driven** - Pub/sub event bus with WebSocket real-time updates
+- ✅ **Health Monitoring** - Built-in health checks with percentage summary
 - ✅ **Error Handling** - 12 custom exception types
 - ✅ **Privacy-First** - Phone number masking, local profile
 - ✅ **Security** - Bot commands disabled in groups, authorization required
+- ✅ **Message ID Generation** - UUID-based unique IDs for every message
+- ✅ **Reply-to-Message Tracking** - Links OUT to triggering IN message
 
 ---
 
