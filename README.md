@@ -177,8 +177,8 @@ UNIXAI/
 - ✅ **API Key Rotation** - Round-robin with persistent index (survives restarts)
 - ✅ **Web Search** - DuckDuckGo integration (weather, financial, news, sports, politics)
 - ✅ **Regional Language Detection** - Javanese, Sundanese, Batak, Minang, Bugis, Banjar
-- ✅ **Pronoun Reference Detection** - Context-aware replies (dia, itu, nya, mereka)
-- ✅ **Conversation Memory** - Remembers last exchange per sender (50 messages, 24h TTL)
+- ✅ **Context-Aware Replies** - Full conversation history always sent to LLM (no pronoun trigger needed)
+- ✅ **Conversation Memory** - Multi-turn history per sender (10 exchanges, 1h TTL, always injected into LLM prompt)
 - ✅ **Rate Limit Handling** - Cooldown/backoff on 429 errors
 - ✅ **Quote Context Extraction** - Extracts quoted/replied message text for LLM context
 
@@ -339,6 +339,49 @@ curl http://127.0.0.1:8888/api/status
 ---
 
 ## 🆕 Latest Updates
+
+### **v2.9.0 - Multi-Turn Conversation Memory (April 11, 2026)**
+
+| Feature | Description | Benefit |
+|---------|-------------|---------|
+| **🧠 Multi-Turn Memory** | LLM receives last 10 exchanges, not just 1 | Context-aware replies across full conversation ✅ |
+| **📋 Always Injected** | History sent to LLM on EVERY message (no pronoun trigger needed) | LLM always knows conversation context ✅ |
+| **🔄 Multi-Turn Format** | `User:` / `Assistant:` alternating format in prompt | LLM understands who said what ✅ |
+| **⏱️ TTL-Based Expiry** | Entries expire after 1 hour automatically | Stale context auto-cleaned ✅ |
+| **🔙 Backward Compatible** | `get_conversation()` still works (returns last exchange) | No breaking changes ✅ |
+
+**Before:**
+```
+❌ Only 1 exchange stored per sender
+❌ Context only sent if pronoun detected (dia, itu, nya, mereka)
+❌ LLM blind to conversation history without pronouns
+❌ Flat single-turn prompt — LLM confused about context
+```
+
+**After:**
+```
+✅ Up to 10 exchanges stored per sender (configurable)
+✅ History ALWAYS sent to LLM — no pronoun trigger needed
+✅ Multi-turn format: User/Assistant alternating
+✅ LLM understands full conversation flow
+✅ TTL 1 hour — old context auto-cleansed
+```
+
+**Example — What LLM Sees Now:**
+```
+Peran: Kamu adalah asisten AI untuk Pande Permadi.
+Gaya: SANTAI, hangat, friendly...
+
+--- RIWAYAT PERCAKAPAN ---
+User: cuaca hari ini?
+Assistant: Cerah 30°C.
+
+User: kalau besok?
+Assistant: Hujan 25°C dengan angin 15 km/h.
+--- END RIWAYAT ---
+
+Pesan pengguna: wind speed-nya?
+```
 
 ### **v2.8.0 - Afternoon Improvements (March 13, 2026)**
 
