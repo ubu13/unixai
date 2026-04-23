@@ -96,8 +96,59 @@ UNIXAI/
 │
 ├── config/                     # Configuration
 │   ├── keys/                   # API keys (gitignored)
+│   │   ├── gemini_keys.txt
+│   │   ├── groq_key.txt
+│   │   └── sound/              # Voice STT keys (isolated)
+│   │       └── groq/api_keys.txt
 │   ├── ai_wa.py                # LLM configuration
 │   └── prompt_common.txt       # System prompts
+│
+├── voice/                      # 🎙️ Voice AI (isolated — no WA touch)
+│   ├── __init__.py             # Global is_speaking flag
+│   ├── config.py               # Voice config (env-based)
+│   ├── intent.py               # Intent classifier (QA, VISUAL, COMMAND)
+│   ├── visual.py               # News/video aggregation
+│   ├── memory.py               # Conversation memory
+│   ├── stt/                    # Speech-to-Text engines
+│   │   ├── factory.py          # Auto-fallback selector
+│   │   ├── groq_whisper.py     # Groq Whisper API
+│   │   └── whisper_local.py    # Offline Whisper
+│   ├── tts/                    # Text-to-Speech engines
+│   │   └── edge_tts.py         # Microsoft Edge TTS
+│   ├── wake_word/              # Wake word detection
+│   │   ├── detector.py         # Combined (clap + keyword)
+│   │   ├── clap_detector.py    # 2-clap detection
+│   │   └── keyword_spotter.py  # "Hey Thanos" / "Wakeup"
+│   └── routes/                 # FastAPI endpoints
+│       └── __init__.py         # 10 endpoints (/status, /transcribe, /speak, /chat, /visual_search, /config, /memory)
+│
+├── static/js/modules/voice/    # 🎙️ Voice Frontend (modular, 21 files)
+│   ├── voice.js                # Entry point (auto-init)
+│   ├── core/                   # Core infrastructure
+│   │   ├── VoiceModule.js      # Orchestrator
+│   │   ├── event-bus.js        # Pub/sub
+│   │   └── voice-state.js      # LocalStorage state
+│   ├── ui/                     # User interface
+│   │   ├── floating-button.js  # Mic button (bottom-right)
+│   │   ├── voice-panel.js      # Main panel (400×600px)
+│   │   ├── sound-wave.js       # User/bot waveform
+│   │   └── status-badge.js     # Badge updates
+│   ├── audio/                  # Audio capture & playback
+│   │   ├── recorder.js         # MediaRecorder wrapper
+│   │   ├── vad.js              # Voice activity detection
+│   │   ├── audio-player.js     # TTS playback sync
+│   │   └── audio-capture.js    # getUserMedia
+│   ├── api/                    # API clients
+│   │   ├── voice-client.js     # Base fetch
+│   │   ├── stt-client.js       # /transcribe
+│   │   ├── tts-client.js       # /speak
+│   │   └── chat-client.js      # /chat (STT→LLM→TTS)
+│   ├── conversation/           # Conversation management
+│   │   ├── message-queue.js    # Render messages
+│   │   └── history.js          # LocalStorage history
+│   └── config/                 # Configuration
+│       ├── config-store.js     # Load/save from server
+│       └── defaults.js         # Default values
 │
 ├── knowledge/                  # RAG Vector DB
 │   ├── documents/              # Uploaded files
@@ -144,6 +195,9 @@ UNIXAI/
 | [`config/rules-policy.txt`](config/rules-policy.txt) | AI response rules & policies |
 | [`tools/dom/README.md`](tools/dom/README.md) | DOM testing tools |
 | [`scripts/README.md`](scripts/README.md) | Utility scripts documentation |
+| [`docs/voice-acoustic-feedback-prevention.md`](docs/voice-acoustic-feedback-prevention.md) | 🎙️ Voice AI: acoustic echo prevention |
+| [`docs/voice-modular-architecture.md`](docs/voice-modular-architecture.md) | 🎙️ Voice AI: frontend modular design |
+| [`docs/voice-api-endpoints.md`](docs/voice-api-endpoints.md) | 🎙️ Voice AI: API reference |
 
 > **💡 Tip:** For development work, start with [`docs/architecture/architecture.md`](docs/architecture/architecture.md) for big picture, then [`docs/modules/modules.md`](docs/modules/modules.md) for module details. AI assistants should read [`.cursor/rules/ai-instructions.md`](.cursor/rules/ai-instructions.md) first.
 
@@ -225,6 +279,37 @@ UNIXAI/
 - ✅ **Auto-cleanup** - Orphaned vector removal on document deletion
 - ✅ **Real-time Mode Switching** - No restart required
 
+### **🎙️ Voice AI (Dashboard-Integrated)**
+> Isolated module — no modifications to WhatsApp bot code. Enable via `.env`.
+
+- ✅ **Speech-to-Text (STT)** — Groq Whisper (free, fast) or local Whisper (offline)
+- ✅ **Text-to-Speech (TTS)** — Microsoft Edge TTS (natural Indonesian & English voices)
+- ✅ **Wake Word Detection** — "Hey Thanos", "Wakeup", clap 2x (client-side)
+- ✅ **Conversation Mode (VAD)** — Continuous listening with auto-submit on silence (1.5s)
+- ✅ **Acoustic Feedback Prevention** — Global `is_speaking` flag blocks STT & wake-word during TTS playback
+- ✅ **Real-time Soundwave** — Blue (user) & purple (bot) visualizations
+- ✅ **Status Badges** — STANDBY → LISTENING → THINKING → BOT SPEAKING
+- ✅ **Multi-turn Memory** — Last 10 exchanges stored locally (localStorage)
+- ✅ **Intent Classification** — Auto-detects Q&A vs Visual Search vs Command
+- ✅ **Visual Assistant** — News, videos, images aggregation (Bento Grid UI)
+- ✅ **Terminal Commands via Voice** — Whitelisted read-only shell commands
+- ✅ **Time-Aware Greetings** — Contextual "selamat pagi/siang/malam"
+- ✅ **Modular Frontend** — 21 ES6 modules (~75 lines each), event-driven
+- ✅ **Configuration Card** — LLM provider/model selector, TTS voice/speed/pitch sliders, test button
+- ✅ **Hot-Swappable Settings** — No restart required
+
+**Config (`.env`):**
+```bash
+VOICE_ENABLED=true
+VOICE_STT_PROVIDER=groq       # groq | whisper_local
+VOICE_TTS_PROVIDER=edge_tts
+VOICE_TTS_VOICE=id-ID-ArdiNeural
+VOICE_WAKE_WORD=false
+VOICE_VISUAL_SEARCH=true
+```
+
+**Endpoints:** `/api/voice/status`, `/transcribe`, `/speak`, `/chat`, `/visual_search`, `/config`
+
 ### **Security & Access Control**
 - ✅ **Bot Commands Disabled in Groups** - `/botoff`, `/boton` only in private
 - ✅ **Authorization System** - BOSS_IDENTIFIERS and CONTROL_IDENTIFIERS
@@ -236,21 +321,11 @@ UNIXAI/
 - ✅ **Ignored Chats** - Official WhatsApp accounts filtered out
 - ✅ **Privacy-First Logging** - Phone number masking in all logs
 
-### **Logging & Monitoring**
-- ✅ **Multi-Destination Logging** - TXT, JSONL, SQLite, Console, WebSocket
-- ✅ **Log Rotation** - Daily rotation with configurable retention (90/30/7 days)
-- ✅ **Gzip Compression** - Old logs compressed automatically
-- ✅ **Color-Coded Console** - Green=private, blue=group, cyan=out, purple=group out, red=errors
-- ✅ **Error Monitoring** - Rate tracking, alert thresholds, cooldown system
-- ✅ **Health Service** - Unified health checks (Ollama, WA, Gemini, Groq, SQLite, Dashboard)
-- ✅ **Error Report Generation** - JSON export with error type distribution
-
 ### **Memory & Planning**
-- ✅ **Short-term Memory** - TTL-based (1 hour, max 100 items)
-- ✅ **Long-term Memory** - Persistent JSON file storage
+- ✅ **Short-term & Long-term Memory** - TTL-based (1h) + persistent JSON storage
 - ✅ **Task Planner** - Priority-based task creation (CRITICAL, HIGH, MEDIUM, LOW)
-- ✅ **ReAct Loop Engine** - OBSERVE → THINK → ACT → OBSERVE → REFLECT cycle
-- ✅ **Tool Registry** - Tool execution with max iteration limit
+- ✅ **ReAct Loop Engine** - OBSERVE → THINK → ACT → REFLECT cycle
+- ✅ **Tool Registry** - Tool execution with iteration limits
 - ✅ **Step Trace Recording** - Full execution history
 
 ### **Architecture**
@@ -269,9 +344,40 @@ UNIXAI/
 ## 🔧 Configuration
 
 ### API Keys
+
+**WhatsApp Bot LLM:**
 Edit files in `config/keys/`:
 - `gemini_keys.txt` - Google Gemini API keys
 - `groq_key.txt` - Groq API key
+
+**Voice AI STT (isolated):**
+Separate keys for Speech-to-Text (not shared with WhatsApp bot):
+- `config/keys/sound/groq/api_keys.txt` - Groq Whisper keys (one per line)
+
+### Voice AI
+
+Enable and configure Voice AI via environment variables in `.env`:
+
+```bash
+# Enable Voice AI module (default: false)
+VOICE_ENABLED=true
+
+# Speech-to-Text provider
+VOICE_STT_PROVIDER=groq          # groq | whisper_local
+
+# Text-to-Speech provider
+VOICE_TTS_PROVIDER=edge_tts      # edge_tts (Microsoft)
+VOICE_TTS_VOICE=id-ID-ArdiNeural # Indonesian male voice
+
+# Wake word & visual search
+VOICE_WAKE_WORD=false            # Client-side wake word detection
+VOICE_VISUAL_SEARCH=true         # News/video panel
+
+# Dashboard port (also used by voice endpoints)
+DASHBOARD_PORT=8888
+```
+
+All Voice AI settings can also be adjusted via the **Voice AI Config Card** in the dashboard (Settings → Config tab). Changes apply instantly (no restart).
 
 ### WhatsApp Profile
 Default: `wa_profile/`
@@ -339,6 +445,30 @@ curl http://127.0.0.1:8888/api/status
 ---
 
 ## 🆕 Latest Updates
+
+### **v3.1.2 - Voice AI Stabilization (April 23, 2026)**
+
+| Fix / Feature | Description | Impact |
+|---------------|-------------|--------|
+| **🔇 Acoustic Feedback Prevention** | Global `is_speaking` flag blocks STT & wake-word during TTS | Bot no longer hears itself ✅ |
+| **🧩 Frontend Modularization** | Split 1150-line `voice.js` monolith into 21 ES6 modules (~75 lines each) | Maintainable, testable, cache-friendly ✅ |
+| **🐛 Badge State Machine Fix** | Removed premature `LISTENING` badge; now accurate state transitions | Clear UI feedback ✅ |
+| **📚 Documentation** | Added 3 detailed docs (architecture, API, feedback prevention) | Better DX ✅ |
+| **🔧 Cache Busting** | Version bump `?v=20260423003` forces fresh browser load | No more stuck old code ✅ |
+
+**Bug Fixes:**
+- ❌ Missing class closing brace → `SyntaxError` prevented module load
+- ❌ Stray `else` block inside `_addMessage()` corrupted scope
+- ❌ Badge showed LISTENING while bot was speaking
+- ❌ No coordination between TTS playback and VAD
+
+**Technical Details:**
+- Backend: Added `is_speaking` global flag in `voice/__init__.py`, guarded STT/wake-word detectors, set flag in `/speak` & `/chat` endpoints (try/finally), blocked `/transcribe` when flag set
+- Frontend: Event-driven modular architecture with EventBus, VoiceState singleton, separated concerns (UI/Audio/API/Conversation)
+- All 21 new JS files pass Node.js syntax validation
+- No breaking changes to API endpoints
+
+---
 
 ### **v2.9.0 - Multi-Turn Conversation Memory (April 11, 2026)**
 
